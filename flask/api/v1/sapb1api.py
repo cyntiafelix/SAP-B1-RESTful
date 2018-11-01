@@ -129,12 +129,13 @@ class CustomersAPI(Resource):
         data = request.get_json(force=True)
         try:
             customer = data['customer']
+            print(customer)
             cardCode = sapb1Adaptor.insertBusinessPartner(customer)
             return cardCode, 201
         except KeyError as e:
-            return error_to_json(e, 400)
+            return self.error_to_json(e, 400)
         except Exception as e:
-            return error_to_json(e, 501)
+            return self.error_to_json(e, 501)
 
     @jwt_required()
     def put(self):
@@ -144,10 +145,10 @@ class CustomersAPI(Resource):
             customer = data['customer']
             cardCode = sapb1Adaptor.updateBusinessPartner(cardcode, customer)
             return cardCode, 202
-        except KeyError as e:
-            return error_to_json(e, 400)
+        except KeyError as e:            
+            return self.error_to_json(e, 400)
         except Exception as e:
-            return error_to_json(e, 501)    
+            return self.error_to_json(e, 501)    
 
 # Retrieve contacts by CardCode.
 class ContactsAPI(Resource):
@@ -262,6 +263,27 @@ class PricesAPI(Resource):
             code = request.args.get("code",None)
             pricelist = sapb1Adaptor.getPrices(limit=limit, columns=fields, whs=whs, code=code)
             return pricelist, 201
+        except Exception as e:
+            log = traceback.format_exc()
+            current_app.logger.exception(e)
+            return log, 501
+
+#Retrive Stock Number of Products 
+class StockAPI(Resource):
+
+    def __init__(self):
+        super(StockAPI, self).__init__()
+
+    @jwt_required()
+    def get(self):
+        try:
+            limit = request.args.get("limit", 100)
+            limit = int(limit)
+            fields = request.args.get("fields",None)
+            whs = request.args.get("whs",None)            
+            code = request.args.get("code",None)
+            stocklist = sapb1Adaptor.getStockNum(limit=limit, columns=fields, whs=whs, code=code)
+            return stocklist, 201
         except Exception as e:
             log = traceback.format_exc()
             current_app.logger.exception(e)
