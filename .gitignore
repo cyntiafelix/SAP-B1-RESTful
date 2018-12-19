@@ -2,9 +2,3 @@
 *.log
 .sync/*
 flask/config.py
-flask/manage.py
-LICENSE.txt
-README.md
-requirements.txt
-flask/api/errors.py
-flask/config.py
