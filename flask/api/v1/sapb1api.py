@@ -1,9 +1,9 @@
 from flask import request, current_app
 from ..app import sapb1Adaptor
-from flask_jwt import jwt_required, current_identity
+from flask_jwt import jwt_required
 from flask_restful import Resource
-import json
 import traceback
+
 
 class InfoAPI(Resource):
 
@@ -14,6 +14,7 @@ class InfoAPI(Resource):
     def get(self):
         info = sapb1Adaptor.info()
         return info, 201
+
 
 class CodeAPI(Resource):
 
@@ -35,6 +36,7 @@ class CodeAPI(Resource):
         elif type == "USDRate":
             codes = sapb1Adaptor.getUSDRate()
         return codes, 201
+
 
 class OrdersAPI(Resource):
 
@@ -114,6 +116,7 @@ class QuotesAPI(Resource):
                 current_app.logger.exception(e)
         return quotation,201
 
+
 class CustomersAPI(Resource):
 
     def __init__(self):
@@ -132,9 +135,9 @@ class CustomersAPI(Resource):
             cardCode = sapb1Adaptor.insertBusinessPartner(customer)
             return cardCode, 201
         except KeyError as e:
-            return error_to_json(e, 400)
+            return self.error_to_json(e, 400)
         except Exception as e:
-            return error_to_json(e, 501)
+            return self.error_to_json(e, 501)
 
     @jwt_required()
     def put(self):
@@ -145,9 +148,9 @@ class CustomersAPI(Resource):
             cardCode = sapb1Adaptor.updateBusinessPartner(cardcode, customer)
             return cardCode, 202
         except KeyError as e:
-            return error_to_json(e, 400)
+            return self.error_to_json(e, 400)
         except Exception as e:
-            return error_to_json(e, 501)    
+            return self.error_to_json(e, 501)
 
 # Retrieve contacts by CardCode.
 class ContactsAPI(Resource):
